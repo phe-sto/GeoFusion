@@ -17,6 +17,9 @@ client = MongoClient('localhost', 27017)
 # choix de la base mongodb GeoFusion
 db = client.GeoFusion
 
+# import de garbage collector parce que c'est des gros volume quand même
+import gc
+
 # paquet de documents sous forme d'array
 documents = []
 
@@ -28,7 +31,6 @@ adresses = csv.reader(adresse_file, delimiter=',', quotechar='"')
 for row in adresses:
 # documents à insérer en base mongo
 # {num, voie, cp, commune, pays, location:{type, coordinates:[lon, lat]}, origin, ts}
-    print(str(row))
     document = {'num': row[0],
     'voie':row[1],
     'cp': row[2],
@@ -47,6 +49,7 @@ for row in adresses:
         # insert un par paquet
         db.adresse.insert_many(documents)
         documents = []
+        gc.collect()
 
 # fermeture du adresse_file
 adresse_file.close()
@@ -57,6 +60,7 @@ if documents == []:
 else:
     # insert un par paquet
     db.adresse.insert_many(documents)
+    gc.collect()
 
 count = db.adresse.count()
 print("{0} adresses en base".format(count))
