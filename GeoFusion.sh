@@ -3,6 +3,33 @@
 # Author: Christophe Brun
 # Société: PapIT
 #------------------------------------------------------------------------------------------------------------------------
+# Fonction de compact and repair utilisé avant et après insertion
+Repair(){
+    echo "--------------------------------------------------------------------------------------"
+    echo "### Compact et repair des données et de la base"
+    echo "--------------------------------------------------------------------------------------"
+    #------------------------------------------------------------------------------------------------------------------------
+    # Compaction de la collection adresse
+    mongo GeoFusion --eval "db.runCommand({compact: 'adresse' })"
+    rc=$?; 
+    if [ $rc != 0 ]; then 
+        echo "Erreur de compact de la collection adresse (db:GeoFusion)";
+        exit $rc;
+    else
+        echo "Compact de la collection adresse réussie (db:GeoFusion)";
+    fi
+    #------------------------------------------------------------------------------------------------------------------------
+    # Repair de la base GeoFusion, sorte de défrag
+    mongo GeoFusion --eval "db.runCommand({repairDatabase: 1})"
+    rc=$?; 
+    if [ $rc != 0 ]; then 
+        echo "Erreur du repair de la base GeoFusion";
+        exit $rc;
+    else
+        echo "Repair de la base GeoFusion réussie";
+    fi
+}
+
 # début compteur de seconde(s)
 STARTTIME=$(date +%s)
 # pour trier des floating point à l'américaine avec des "."
@@ -218,7 +245,7 @@ echo "### Merge des fichiers BAN et BANO $(date)"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
 # Merge des fichiers BAN et BANO
-for i in `echo *.tmp`; do     cat $i >>  adresse.csv; done
+for i in `echo *.tmp`; do     cat $i >>  adresseDup.csv; done
 rc=$?; 
 if [ $rc != 0 ]; then 
     echo "Erreur lors du merge des fichiers BAN et BANO";
@@ -235,7 +262,7 @@ echo "### Suppression des adresses en doublons $(date)"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
 # Suppression des adresses en doublons
-sort -t, -nuk1,4 adresse.csv
+sort -t, -uk1,4 adresseDup.csv > adresse.csv
 rc=$?; 
 if [ $rc != 0 ]; then 
     echo "Erreur lors de la supression des  doublons du fhcier adresse";
@@ -243,6 +270,8 @@ if [ $rc != 0 ]; then
 else
     echo "Suppression des doublons du fhcier adresse";
 fi
+echo "Suppression de fichiers"
+rm adresseDup.csv
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Drop de la collection adresse et d'indexes de la mongodb GeoFusion"
@@ -258,16 +287,9 @@ else
     echo "Collection adresse de la mongodb GeoFusion effacée";
 fi
 #------------------------------------------------------------------------------------------------------------------------
-# Drop de la collection adresse dans la base mongodb GeoFusion
-mongo GeoFusion --eval "db.adresse.dropIndexes()"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur du drop des indexes de la collection adresse dans la mongodb GeoFusion";
-    exit $rc;
-else
-    echo "Drop des indexes de la collection adresse de la mongodb GeoFusion";
-fi
-#------------------------------------------------------------------------------------------------------------------------
+
+# avant insertion minise le filesize
+Repair
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Indexation de la base GeoFusion"
@@ -361,7 +383,10 @@ if [ -s "adresse.csv" ]; then
 else
     echo "Fichier adresse.csv vide"
 fi
-#------------------------------------------------------------------------------------------------------------------------
+echo "Suppression de fichiers"
+rm adresse.csv
+# après insertion minise le filesize
+Repair
 
 #------------------------------------------------------------------------------------------------------------------------
 ENDTIME=$(date +%s)

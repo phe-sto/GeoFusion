@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # insert du fichier adresse in MongoDB adresse collection
+def insertion(db, documents):
+    """Insert a packet of document and count the total"""
+# insert un par paquet
+    db.adresse.insert_many(documents)
+    count = db.adresse.count()
+    print("{0} adresses en base à {1}".format(count, datetime.now()))
+    return []
+
 __author__ = 'PapIT'
 # lib système pour passage d'arguments
 import sys
@@ -17,9 +25,6 @@ client = MongoClient('localhost', 27017)
 # choix de la base mongodb GeoFusion
 db = client.GeoFusion
 
-# import de garbage collector parce que c'est des gros volume quand même
-import gc
-
 # paquet de documents sous forme d'array
 documents = []
 
@@ -34,22 +39,19 @@ for row in adresses:
     document = {'num': row[0],
     'voie':row[1],
     'cp': row[2],
-    'commune':row[3],
+    'commune': row[3],
     'pays': 'FRANCE',
     'location': {'type':'Point',
         'coordinates': [float(row[4]),float(row[5])]
         },
     'origin': 'GeoFusion.sh',
-    'ts':datetime.now(),
+    'ts': datetime.now(),
     }
     documents.append(document)
         
     # si le taleau dépasse 100MBytes
-    if sys.getsizeof(documents) > 10000000:
-        # insert un par paquet
-        db.adresse.insert_many(documents)
-        documents = []
-        gc.collect()
+    if len(documents) == 1000000:
+        documents = insertion(db, documents)
 
 # fermeture du adresse_file
 adresse_file.close()
@@ -58,12 +60,7 @@ adresse_file.close()
 if documents == []:
     pass
 else:
-    # insert un par paquet
-    db.adresse.insert_many(documents)
-    gc.collect()
-
-count = db.adresse.count()
-print("{0} adresses en base".format(count))
+    documents = insertion(db, documents)
 
 # fin du programme sans errreur
 sys.exit(0)
