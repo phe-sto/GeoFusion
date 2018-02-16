@@ -10,23 +10,13 @@ Repair(){
     echo "--------------------------------------------------------------------------------------"
     #------------------------------------------------------------------------------------------------------------------------
     # Compaction de la collection adresse
-    mongo GeoFusion --eval "db.runCommand({compact: 'adresse' })"
+    mongo GeoFusion CompactRepair.js
     rc=$?; 
     if [ $rc != 0 ]; then 
-        echo "Erreur de compact de la collection adresse (db:GeoFusion)";
+        echo "Erreur de compact ou repair de la collection adresse (db:GeoFusion)";
         exit $rc;
     else
-        echo "Compact de la collection adresse réussie (db:GeoFusion)";
-    fi
-    #------------------------------------------------------------------------------------------------------------------------
-    # Repair de la base GeoFusion, sorte de défrag
-    mongo GeoFusion --eval "db.runCommand({repairDatabase: 1})"
-    rc=$?; 
-    if [ $rc != 0 ]; then 
-        echo "Erreur du repair de la base GeoFusion";
-        exit $rc;
-    else
-        echo "Repair de la base GeoFusion réussie";
+        echo "Compact ou repair de la collection adresse réussie (db:GeoFusion)";
     fi
 }
 
@@ -274,97 +264,22 @@ echo "Suppression de fichiers"
 rm adresseDup.csv
 
 echo "--------------------------------------------------------------------------------------"
-echo "### Drop de la collection adresse et d'indexes de la mongodb GeoFusion"
+echo "### Drop et création de la collection adresse et d'indexes de la mongodb GeoFusion"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
-# Drop de la collection adresse dans la base mongodb GeoFusion
-mongo GeoFusion --eval "db.adresse.drop()"
+# Drop et création de la collection adresse dans la base mongodb GeoFusion
+mongo GeoFusion CreateCollection.js
 rc=$?; 
 if [ $rc != 0 ]; then 
-    echo "Erreur du drop() de la collection adresse dans la mongodb GeoFusion";
+    echo "Erreur du drop et création de la collection adresse dans la mongodb GeoFusion";
     exit $rc;
 else
-    echo "Collection adresse de la mongodb GeoFusion effacée";
+    echo "Collection adresse créée avec succès dans la mongodb GeoFusion";
 fi
 #------------------------------------------------------------------------------------------------------------------------
 
 # avant insertion minise le filesize
 Repair
-
-echo "--------------------------------------------------------------------------------------"
-echo "### Indexation de la base GeoFusion"
-echo "--------------------------------------------------------------------------------------"
-#------------------------------------------------------------------------------------------------------------------------
-# Autorisation des textSearch
-mongo GeoFusion --eval "db.adminCommand({setParameter:true,textSearchEnabled:true})"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de l'autorisation des textSearch";
-    exit $rc;
-else
-    echo "Autorisation des textSearch";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# Création de l'index unique sur tous les champs
-mongo GeoFusion --eval "db.adresse.createIndex({'num' : 1, 'voie' : 1, 'cp': 1, 'commune' : 1, 'pays': 1},{unique:true})"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de l'indexation sur tous les champs";
-    exit $rc;
-else
-    echo "Indexation unique sur tous les champs";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# Création de l'index 2dsphere
-mongo GeoFusion --eval "db.adresse.createIndex({'location': '2dsphere'})"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de la création d'index 2dsphere dans db.adresse (db:GeoFusion)";
-    exit $rc;
-else
-    echo "Création d'index 2dsphere dans db.adresse réussie  (db:GeoFusion)";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# création d'index num
-mongo GeoFusion --eval "db.adresse.createIndex( { 'num' : 1 })"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de la création d'index sur num dans db.adresse (db:GeoFusion)";
-    exit $rc;
-else
-    echo "Création d'index sur num dans db.adresse réussie  (db:GeoFusion)";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# création d'index voie
-mongo GeoFusion --eval "db.adresse.createIndex( { 'voie' : 1 })"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de la création d'index sur voie dans db.adresse (db:GeoFusion)";
-    exit $rc;
-else
-    echo "Création d'index sur voie dans db.adresse réussie  (db:GeoFusion)";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# création d'index cp
-mongo GeoFusion --eval "db.adresse.createIndex( { 'cp' : 1 })"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de la création d'index sur cp dans db.adresse (db:GeoFusion)";
-    exit $rc;
-else
-    echo "Création d'index sur cp dans db.adresse réussie  (db:GeoFusion)";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-# création d'index num, voie et commune
-mongo GeoFusion --eval "db.adresse.createIndex( { 'commune' : 1 })"
-rc=$?; 
-if [ $rc != 0 ]; then 
-    echo "Erreur de la création d'index sur commune dans db.adresse (db:GeoFusion)";
-    exit $rc;
-else
-    echo "Création d'index sur commune dans db.adresse réussie  (db:GeoFusion)";
-fi
-#------------------------------------------------------------------------------------------------------------------------
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Insertion du fichier adresse dans la base mongodb GeoFusion"
@@ -385,6 +300,7 @@ else
 fi
 echo "Suppression de fichiers"
 rm adresse.csv
+
 # après insertion minise le filesize
 Repair
 
