@@ -24,6 +24,9 @@ de géocodage et reverse-géocodage.
 ## Chargement des adresses
   > sh GeoFusion.sh
   
+  filtre sur un code postal avec une expression régulière
+  > sh GeoFusion.sh '018([0-9]){2}'
+  
 ## Démarrage du serveur de géocodage
   > nodejs GeoCoding.js
 
