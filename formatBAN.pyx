@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 # mise en forme du BAN
 __author__ = 'PapIT'
-# lib système pour passage d'arguments
-import sys
+__email__ = "christophe.brun@papit.fr"
 # import de la librairie csv
 import csv
+# lib système pour passage d'arguments
+import sys
 
 BANin_file = open(sys.argv[1], 'r')
 BANout_file = open('BANtmp1.tmp', 'a')
@@ -20,10 +21,10 @@ for row in adresses:
     if row[4] == '':
         num = row[3]
     else:
-        num = '{0} {1}'.format(row[3],row[4])
+        num = '{0} {1}'.format(row[3], row[4])
     line.append(num.upper())
     line.append(row[1].upper().replace("RU ", "RUE "))
-    line.append(row[6].upper())
+    line.append('{num:^05}'.format(num=row[6].upper()))
     line.append(row[15].upper())
     line.append(row[13].upper())
     line.append(row[14].upper())
@@ -33,5 +34,5 @@ for row in adresses:
 BANin_file.close()
 BANout_file.close()
 
-# fin du programme sans errreur
+# fin du programme sans erreur
 sys.exit(0)

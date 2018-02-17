@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 # mise en forme du BANO
 __author__ = 'PapIT'
-# lib système pour passage d'arguments
-import sys
+__email__ = "christophe.brun@papit.fr"
 # import de la librairie csv
 import csv
+# lib système pour passage d'arguments
+import sys
 
 BANOin_file = open(sys.argv[1], 'r')
 BANOout_file = open('BANOtmp1.tmp', 'a')
@@ -19,7 +20,7 @@ for row in adresses:
     line = []
     line.append(row[1].upper())
     line.append(row[2].upper().replace("RU ", "RUE "))
-    line.append(row[3].upper())
+    line.append('{num:^05}'.format(num=row[3].upper()))
     line.append(row[4].upper())
     line.append(row[6].upper())
     line.append(row[7].upper())

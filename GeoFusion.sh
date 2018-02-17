@@ -3,6 +3,16 @@
 # Author: Christophe Brun
 # Société: PapIT
 #------------------------------------------------------------------------------------------------------------------------
+# dépendance avec avec python pour la compilation du cython
+MODULE_PYTHON=lpython3.5m
+INCLUDE_PYTHON=/usr/include/python3.5
+# création de l'argument éventuel pour adresseInsert 
+if [ -n "$1" ]; then
+    ARG_PREF='-cp '
+    ARG_CP=$ARG_PREF$1
+else
+    ARG_CP=''
+fi
 # Fonction de compact and repair utilisé avant et après insertion
 Repair(){
     echo "--------------------------------------------------------------------------------------"
@@ -44,7 +54,7 @@ echo "### Compilation du C"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
 # compilation C avec gcc du source C adresseInsert.c
-gcc -Os -I /usr/include/python3.5m -o adresseInsert adresseInsert.c -lpython3.5m -lpthread -lm -lutil -ldl
+gcc -Os -I $INCLUDE_PYTHON -o adresseInsert adresseInsert.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
 rc=$?; 
 if [ $rc != 0 ]; then 
     echo "Erreur de compilation de adresseInsert.c";
@@ -68,7 +78,7 @@ echo "### Compilation du C"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
 # compilation C avec gcc du source C formatBAN.c
-gcc -Os -I /usr/include/python3.5m -o formatBAN formatBAN.c -lpython3.5m -lpthread -lm -lutil -ldl
+gcc -Os -I $INCLUDE_PYTHON -o formatBAN formatBAN.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
 rc=$?; 
 if [ $rc != 0 ]; then 
     echo "Erreur de compilation de formatBAN.c";
@@ -92,7 +102,7 @@ echo "### Compilation du C"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
 # compilation C avec gcc du source C formatBANO.c
-gcc -Os -I /usr/include/python3.5m -o formatBANO formatBANO.c -lpython3.5m -lpthread -lm -lutil -ldl
+gcc -Os -I $INCLUDE_PYTHON -o formatBANO formatBANO.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
 rc=$?; 
 if [ $rc != 0 ]; then 
     echo "Erreur de compilation de formatBANO.c";
@@ -287,7 +297,7 @@ echo "--------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------------
 # Insertion du fichier adresse dans la base mongodb GeoFusion
 if [ -s "adresse.csv" ]; then
-    ./adresseInsert adresse.csv
+    ./adresseInsert -f adresse.csv $ARG_CP
     rc=$?; 
     if [ $rc != 0 ]; then 
         echo "Erreur pgm adresseInsert lors du traitement du fichier adresse";
