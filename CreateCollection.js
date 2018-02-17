@@ -4,7 +4,7 @@ var collections = db.runCommand({ listCollections: 1 })
 var collectionExist = false
 var i = collections.cursor.length;
 
-while (i--) {
+while (i-- && !collectionExist) {
     // si la collection adresse existe
     if (collections.cursor[i].name == 'adresse') {
         collectionExist = true
