@@ -2,12 +2,15 @@
 // liste des collection dans la base
 var collections = db.runCommand({ listCollections: 1 })
 var collectionExist = false
-for (var i = 0; i < collectionExist.length; i++) {
+var i = collections.cursor.length;
+
+while (i--) {
     // si la collection adresse existe
     if (collections.cursor[i].name == 'adresse') {
-        adresse = true
+        collectionExist = true
     }
 }
+
 // mais si elle n'éxista pas la cré
 if (!collectionExist) {
     db.createCollection('adresse')
