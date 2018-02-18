@@ -57,7 +57,8 @@ __email__ = "christophe.brun@papit.fr"
 # gestion des arguments
 parser = argparse.ArgumentParser(
     description="Filtre sur le code postal avec une d'expression régulière")
-parser.add_argument('-f', '--file', type=str, help='fichier à insérer', required=True)
+parser.add_argument('-f', '--file', type=str,
+                    help='fichier à insérer', required=True)
 parser.add_argument('-cp', '--code_postal', type=str, help='Expression régulière sur le code postal avec quote',
                     required=False)
 
