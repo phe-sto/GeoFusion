@@ -21,13 +21,13 @@ def insertion(db, documents):
 
     :param db: la base dans laquelle insérer
     :param documents: les documents à insérer sous formede JSON array
-    :return: une liste vide
+    :return: une liste vide et l'indice à zéro
     """
     # insert un par paquet
     db.adresse.insert_many(documents)
     count = db.adresse.count()
     print("{0} adresses en base à {1}".format(count, datetime.now()))
-    return []
+    return [], 0
 
 
 def document(row):
@@ -86,6 +86,7 @@ adresse_file = open(args.file, 'r')
 # lecture séquentielle du fchier adresse
 adresses = csv.reader(adresse_file, delimiter=',', quotechar='"')
 
+i = 1
 # traitement du fchier adresse
 for row in adresses:
     # absence d'argument filtre
@@ -98,10 +99,10 @@ for row in adresses:
             pass
         else:
             documents.append(document(row))
-
+    i += 1
     # si le taleau dépasse 100MBytes
-if len(documents) == 1000000:
-    documents = insertion(db, documents)
+    if i == 1000000:
+        documents, i = insertion(db, documents)
 
 # fermeture du adresse_file
 adresse_file.close()
