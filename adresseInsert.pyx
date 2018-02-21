@@ -27,7 +27,7 @@ def insertion(db, documents):
     db.adresse.insert_many(documents)
     count = db.adresse.count()
     print("{0} adresses en base à {1}".format(count, datetime.now()))
-    return [], 0
+    return []
 
 
 def document(row):
@@ -86,7 +86,6 @@ adresse_file = open(args.file, 'r')
 # lecture séquentielle du fchier adresse
 adresses = csv.reader(adresse_file, delimiter=',', quotechar='"')
 
-i = 1
 # traitement du fchier adresse
 for row in adresses:
     # absence d'argument filtre
@@ -99,10 +98,9 @@ for row in adresses:
             pass
         else:
             documents.append(document(row))
-    i += 1
-    # si le taleau dépasse 100MBytes
-    if i == 1000000:
-        documents, i = insertion(db, documents)
+    # si le taleau est à un million d'adresses
+    if len(documents) == 1000000:
+        documents = insertion(db, documents)
 
 # fermeture du adresse_file
 adresse_file.close()
