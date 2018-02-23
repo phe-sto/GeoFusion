@@ -24,17 +24,6 @@ db.adminCommand({
   setParameter: true,
   textSearchEnabled: true
 })
-// création des indexes
-// évite les doublons
-db.adresse.createIndex({
-  'num': 1,
-  'voie': 1,
-  'cp': 1,
-  'commune': 1,
-  'pays': 1
-}, {
-  unique: true
-})
 // pour repérer les adresses dans l'espace
 db.adresse.createIndex({
   'location': '2dsphere'
