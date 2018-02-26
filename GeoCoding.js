@@ -133,7 +133,7 @@ app.get('/', function(req, res) {
           $geoNear: {
             $geometry: {
               "type": "Point",
-              "coordinates": [lat, lon]
+              "coordinates": [lon, lat]
             }
           }
         }
