@@ -109,9 +109,9 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Compilation de formatBANO.c réussie";
+    echo "Suppression de fichiers";
+    rm *.csv;
 fi
-echo "Suppression de fichiers"
-rm *.csv
 
 #------------------------------------------------------------------------------------------------------------------------
 echo "--------------------------------------------------------------------------------------"
@@ -138,12 +138,11 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Décompression par unzip réussie";
+    echo "Suppression de fichiers"
+    rm BAN_licence_gratuite_repartage.zip
+    rm contenu.txt
+    rm BAN_Licence_de_repartage.pdf
 fi
-echo "Suppression de fichiers"
-
-rm BAN_licence_gratuite_repartage.zip
-rm contenu.txt
-rm BAN_Licence_de_repartage.pdf
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Supression de la première ligne de chaque fichier  BAN $(date)"
@@ -171,9 +170,9 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Merge des fichiers BAN réussie";
+    echo "Suppression de fichiers"
+    rm -f BAN_licence_gratuite_repartage*
 fi
-echo "Suppression de fichiers"
-rm -f BAN_licence_gratuite_repartage*
 
 #------------------------------------------------------------------------------------------------------------------------
 
@@ -189,9 +188,9 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Mise en forme du BAN réussie";
+    echo "Suppression de fichiers"
+    rm -f BAN.csv
 fi
-echo "Suppression de fichiers"
-rm -f BAN.csv
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Téléchargement du BANO"
@@ -236,9 +235,9 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Mise en forme du BANO réussie";
+    echo "Suppression de fichiers"
+    rm -f full.csv
 fi
-echo "Suppression de fichiers"
-rm -f full.csv
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Merge des fichiers BAN et BANO $(date)"
@@ -252,10 +251,10 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Merge des fichiers BAN et et BANO réussie";
+    echo "Suppression de fichiers"
+    rm -f BANOtmp1.tmp
+    rm -f BANtmp1.tmp
 fi
-echo "Suppression de fichiers"
-rm -f BANOtmp1.tmp
-rm -f BANtmp1.tmp
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Suppression des adresses en doublons $(date)"
@@ -269,9 +268,9 @@ if [ $rc != 0 ]; then
     exit $rc;
 else
     echo "Suppression des doublons du fhcier adresse";
+    echo "Suppression de fichiers"
+    rm adresseDup.csv
 fi
-echo "Suppression de fichiers"
-rm adresseDup.csv
 
 echo "--------------------------------------------------------------------------------------"
 echo "### Drop et création de la collection adresse et d'indexes de la mongodb GeoFusion"
@@ -304,12 +303,12 @@ if [ -s "adresse.csv" ]; then
         exit $rc;
     else
         echo "adresseInsert inséré le fichier adresse";
+        echo "Suppression de fichiers"
+        rm adresse.csv
     fi
 else
     echo "Fichier adresse.csv vide"
 fi
-echo "Suppression de fichiers"
-rm adresse.csv
 
 # après insertion minise le filesize
 Repair
