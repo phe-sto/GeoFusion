@@ -15,5 +15,9 @@
     "GeoFusion"
   ],
   "author": "Christophe Brun PapIT",
-  "license": "ISC"
+  "license": "no license",
+  "repository": {
+  "type": "git",
+  "url": "git://github.com/phe-sto/GeoFusion.git"
+  }
 }
