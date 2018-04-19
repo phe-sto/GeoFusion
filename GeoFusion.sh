@@ -34,18 +34,20 @@ Repair(){
 STARTTIME=$(date +%s)
 # pour trier des floating point à l'américaine avec des "."
 export LC_NUMERIC=en_US.utf-8
+# fonction de compilation des sources
+compil () {
 echo "--------------------------------------------------------------------------------------"
 echo "### Cythonization des sources"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
-# cythonization cython du source adresseInsert.pyx
-cython3 --embed adresseInsert.pyx
+# cythonization cython du source
+cython3 --embed $1.pyx
 rc=$?;
 if [ $rc != 0 ]; then
-    echo "Erreur de cythonization cython du source adresseInsert.pyx";
+    echo "Erreur de cythonization cython du source $1.pyx";
     exit $rc;
 else
-    echo "Cythonization cython3 réussie pour adresseInsert.pyx";
+    echo "Cythonization cython3 réussie pour $1.pyx";
 fi
 #------------------------------------------------------------------------------------------------------------------------
 
@@ -53,66 +55,22 @@ echo "--------------------------------------------------------------------------
 echo "### Compilation du C"
 echo "--------------------------------------------------------------------------------------"
 #------------------------------------------------------------------------------------------------------------------------
-# compilation C avec gcc du source C adresseInsert.c
-gcc -Os -I $INCLUDE_PYTHON -o adresseInsert adresseInsert.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
+# compilation C avec gcc du source C
+gcc -Os -I $INCLUDE_PYTHON -o $1 $1.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
 rc=$?;
 if [ $rc != 0 ]; then
-    echo "Erreur de compilation de adresseInsert.c";
+    echo "Erreur de compilation de $1.c";
     exit $rc;
 else
-    echo "Compilation de adresseInsert.c réussie";
+    echo "Compilation de $1.c réussie";
+    rm $1.c
 fi
-# cythonization cython du source formatBAN.pyx
-cython3 --embed formatBAN.pyx
-rc=$?;
-if [ $rc != 0 ]; then
-    echo "Erreur de cythonization cython du source formatBAN.pyx";
-    exit $rc;
-else
-    echo "Cythonization cython3 réussie pour formatBAN.pyx";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-
-echo "--------------------------------------------------------------------------------------"
-echo "### Compilation du C"
-echo "--------------------------------------------------------------------------------------"
-#------------------------------------------------------------------------------------------------------------------------
-# compilation C avec gcc du source C formatBAN.c
-gcc -Os -I $INCLUDE_PYTHON -o formatBAN formatBAN.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
-rc=$?;
-if [ $rc != 0 ]; then
-    echo "Erreur de compilation de formatBAN.c";
-    exit $rc;
-else
-    echo "Compilation de formatBAN.c réussie";
-fi
-# cythonization cython du source formatBANO.pyx
-cython3 --embed formatBANO.pyx
-rc=$?;
-if [ $rc != 0 ]; then
-    echo "Erreur de cythonization cython du source formatBANO.pyx";
-    exit $rc;
-else
-    echo "Cythonization cython3 réussie pour formatBANO.pyx";
-fi
-#------------------------------------------------------------------------------------------------------------------------
-
-echo "--------------------------------------------------------------------------------------"
-echo "### Compilation du C"
-echo "--------------------------------------------------------------------------------------"
-#------------------------------------------------------------------------------------------------------------------------
-# compilation C avec gcc du source C formatBANO.c
-gcc -Os -I $INCLUDE_PYTHON -o formatBANO formatBANO.c -$MODULE_PYTHON -lpthread -lm -lutil -ldl
-rc=$?;
-if [ $rc != 0 ]; then
-    echo "Erreur de compilation de formatBANO.c";
-    exit $rc;
-else
-    echo "Compilation de formatBANO.c réussie";
-    echo "Suppression de fichiers";
-    rm *.csv;
-fi
-
+}
+compil "adresseInsert"
+compil "formatBAN"
+compil "formatBANO"
+echo "Suppression des fichiers CSV du répertoire";
+rm *.csv;
 #------------------------------------------------------------------------------------------------------------------------
 echo "--------------------------------------------------------------------------------------"
 echo "### Téléchargement du BAN $(date)"
