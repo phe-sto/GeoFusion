@@ -84,14 +84,6 @@ app.get('/', function(req, res) {
         "commune": commune,
         "cp": cp,
         "pays": pays
-      }, {
-        score: {
-          $meta: "textScore"
-        }
-      }).sort({
-        score: {
-          $meta: "textScore"
-        }
       }).limit(limit).toArray(function(err, array) {
         // erreur lors du find
         if (err) res.send({

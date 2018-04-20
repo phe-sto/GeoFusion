@@ -21,7 +21,7 @@ for row in adresses:
     if row[4] == '':
         num = row[3]
     else:
-        num = '{0} {1}'.format(row[3], row[4])
+        num = '{0} {1}'.format(row[3].strip("0"), row[4])
     line.append(num.upper())
     line.append(row[1].upper().replace("RU ", "RUE "))
     line.append('{num:^05}'.format(num=row[6].upper()))

@@ -18,12 +18,12 @@ writer = csv.writer(BANOout_file, delimiter=',', lineterminator='\n', quoting=cs
 # traitement du fchier adresse
 for row in adresses:
     line = []
-    line.append(row[1].upper())
+    line.append(row[1].strip("0").upper())
     line.append(row[2].upper().replace("RU ", "RUE "))
     line.append('{num:^05}'.format(num=row[3].upper()))
     line.append(row[4].upper())
-    line.append(row[6].upper())
     line.append(row[7].upper())
+    line.append(row[6].upper())
     writer.writerow(line)
 
 # fermeture des BAN
