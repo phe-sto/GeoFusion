@@ -31,7 +31,7 @@ app.get('/', function(req, res) {
     // mise en foorme des variables recherchée
     // numéro de batiment
     if (q.num) {
-      var num = RegExp("^" + q.num.toUpperCase())
+      var num = RegExp(q.num.toUpperCase() + "[a-zA-Z\s]*")
     } else {
       var num = new RegExp("^" + "")
     }
