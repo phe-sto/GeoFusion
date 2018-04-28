@@ -84,7 +84,7 @@ app.get('/', function(req, res) {
         "commune": commune,
         "cp"     : cp,
         "pays"   : pays
-      }).limit(limit).toArray(function (err, array) {
+      }).limit(limit).maxTimeMS(2000).toArray(function (err, array) {
         // erreur lors du find
         if (err) res.send({
           "errorMessage": err
