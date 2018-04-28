@@ -31,7 +31,7 @@ app.get('/', function(req, res) {
     // mise en foorme des variables recherchée
     // numéro de batiment
     if (q.num) {
-      var num = RegExp(q.num.toUpperCase() + "[a-zA-Z\s]*")
+      var num = new RegExp("^" + q.num.toUpperCase() + "$")
     } else {
       var num = new RegExp("^" + "")
     }
@@ -79,12 +79,12 @@ app.get('/', function(req, res) {
 
       // passage de la requête
       db.collection("adresse").find({
-        "num": num,
-        "voie": voie,
+        "num"    : num,
+        "voie"   : voie,
         "commune": commune,
-        "cp": cp,
-        "pays": pays
-      }).limit(limit).toArray(function(err, array) {
+        "cp"     : cp,
+        "pays"   : pays
+      }).limit(limit).toArray(function (err, array) {
         // erreur lors du find
         if (err) res.send({
           "errorMessage": err
